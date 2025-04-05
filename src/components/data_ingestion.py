@@ -3,10 +3,12 @@
 import os
 import pandas as pd
 import sys
-from src.exception import CustomException
+# from exception import CustomException
 from src.logger import logging
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
+
+from data_transformation import DataTransformation,DataTransformationConfig
 
 @dataclass
 class DataIngestionConfig:
@@ -24,7 +26,7 @@ class DataIngestion:
             df = pd.read_csv('/Users/akashzamnani/practise/DS-DL-NLP/MLproject/Notebook/data/StudentsPerformance.csv') 
             logging.info("Dataset fetched as df")
 
-            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path,),exist_ok=True)
+            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
 
             df.to_csv(self.ingestion_config.raw_data_path,index= False,header=True)
             logging.info('Train Test split initiated')
@@ -39,9 +41,13 @@ class DataIngestion:
                 self.ingestion_config.test_data_path
             )
         except Exception as e:
-            raise CustomException(e,sys)
+            # raise CustomException(e,sys)
+            pass
 
 
 if __name__ == '__main__':
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_data, test_data = obj.initiate_data_ingestion()
+
+    data_transformation = DataTransformation()
+    data_transformation.initiate_data_transformation(train_data,test_data)
